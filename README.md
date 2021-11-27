@@ -1,7 +1,8 @@
-# semantic-segmentation
+# Semantic-Segmentation:
 semantic segmentation project on kitti data set as part of ITI AI-Pro internship graduation project
+![alt text](https://nanonets.com/blog/content/images/2020/08/1_wninXztJ90h3ZHtKXCNKFA.jpeg)
 
-# refrences
+# Refrences:
  - [latest papers in segmentation | tracking | detection](https://www.linkedin.com/company/argo-vision)
  - [PSPNet implementation](https://medium.com/analytics-vidhya/semantic-segmentation-in-pspnet-with-implementation-in-keras-4843d05fc025) 
  - [PSPNet explained](https://developers.arcgis.com/python/guide/how-pspnet-works/) 
