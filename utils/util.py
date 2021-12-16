@@ -179,7 +179,7 @@ def train_valid_generator(train_path, seed, batch_sz, DIM):
     #image_datagen.fit(images, augment=True, seed=seed)
     #mask_datagen.fit(masks, augment=True, seed=seed)
     t_path = os.path.join(train_path, 'train')
-    train_length = len(os.listdir(os.path.join(t_path,'images')))
+    train_length = len(os.listdir(os.path.join(t_path, 'images')))
 
     image_generator = image_datagen.flow_from_directory(
         t_path,
@@ -207,7 +207,7 @@ def train_valid_generator(train_path, seed, batch_sz, DIM):
             yield (img, new_mask)
 
     v_path = os.path.join(train_path, 'valid')
-    valid_length =len(os.listdir(os.path.join(v_path,'images')))
+    valid_length = len(os.listdir(os.path.join(v_path, 'images')))
 
     val_image_generator = image_datagen.flow_from_directory(
         v_path,
@@ -247,63 +247,57 @@ def freeze_model_layers(model, layer_name):
             layer.trainable = False
 
 
+def plot_predictions(path, model, dim, mode=None, seed=None, test_sample_size=10):
 
+    if mode == 'train' or mode == 'valid':
+        img_path = os.path.join(path, mode, 'images')
+        labels_path = os.path.join(path, mode, 'labels')
 
-
-
-
-
-
-
-
-
-
-
-def plot_predictions (path,model,dim,mode=None):
-    
-    
-    
-    if mode=='train' or mode=='valid':
-        img_path = os.path.join(path,mode,'images')
-        labels_path = os.path.join(path,mode,'labels') 
-
-        for file,label in zip(sorted(os.listdir(img_path)),sorted(os.listdir(labels_path))):
-            x = np.array([np.array(load_img(os.path.join(img_path,file), target_size=(dim,dim) ))*1./255])
-            y = np.array([np.array(load_img(os.path.join(labels_path,file), target_size=(dim,dim)))])
+        for file, label in zip(sorted(os.listdir(img_path)), sorted(os.listdir(labels_path))):
+            x = np.array(
+                [np.array(load_img(os.path.join(img_path, file), target_size=(dim, dim)))*1./255])
+            y = np.array(
+                [np.array(load_img(os.path.join(labels_path, file), target_size=(dim, dim)))])
             preds = model.predict(x)
-            
-            fig , ax = plt.subplots(1,4,figsize=(16,16))
-            rgb_mask = np.apply_along_axis(map_class_to_rgb, -1, np.expand_dims(np.argmax(preds[0], axis=-1), -1))
-            
+
+            fig, ax = plt.subplots(1, 4, figsize=(16, 16))
+            rgb_mask = np.apply_along_axis(
+                map_class_to_rgb, -1, np.expand_dims(np.argmax(preds[0], axis=-1), -1))
+
             ax[0].imshow(rgb_mask)
             ax[1].imshow(y[0])
             ax[2].imshow(x[0])
-            
+
             ax[3].imshow(x[0])
-            ax[3].imshow(rgb_mask, cmap = 'jet', alpha = 0.5)
-            
-    elif mode=='testing':
+            ax[3].imshow(rgb_mask, cmap='jet', alpha=0.5)
+
+    elif mode == 'testing':
+        np.random.seed(seed)
         testing_list = sorted(os.listdir(path))
-        for file in np.random.choice(testing_list,size=30,replace=False) :
-            x = np.array([np.array(load_img(os.path.join(path,file), target_size=(dim,dim) ))*1./255])
+        for file in np.random.choice(testing_list, size=test_sample_size, replace=False, ):
+            x = np.array(
+                [np.array(load_img(os.path.join(path, file), target_size=(dim, dim)))*1./255])
             preds = model.predict(x)
-            fig , ax = plt.subplots(1,3,figsize=(16,16))
-            rgb_mask = np.apply_along_axis(map_class_to_rgb, -1, np.expand_dims(np.argmax(preds[0], axis=-1), -1))
+            fig, ax = plt.subplots(1, 3, figsize=(16, 16))
+            rgb_mask = np.apply_along_axis(
+                map_class_to_rgb, -1, np.expand_dims(np.argmax(preds[0], axis=-1), -1))
             ax[0].imshow(rgb_mask)
             ax[1].imshow(x[0])
-            
+
             ax[2].imshow(x[0])
-            ax[2].imshow(rgb_mask, cmap = 'jet', alpha = 0.5)
-            
-    elif mode=='ITI':
+            ax[2].imshow(rgb_mask, cmap='jet', alpha=0.5)
+
+    elif mode == 'ITI':
         iti_list = sorted(os.listdir(path))
-        for file in iti_list :
-            x = np.array([np.array(load_img(os.path.join(path,file), target_size=(dim,dim) ))*1./255])
+        for file in iti_list:
+            x = np.array(
+                [np.array(load_img(os.path.join(path, file), target_size=(dim, dim)))*1./255])
             preds = model.predict(x)
-            fig , ax = plt.subplots(1,3,figsize=(16,16))
-            rgb_mask = np.apply_along_axis(map_class_to_rgb, -1, np.expand_dims(np.argmax(preds[0], axis=-1), -1))
+            fig, ax = plt.subplots(1, 3, figsize=(16, 16))
+            rgb_mask = np.apply_along_axis(
+                map_class_to_rgb, -1, np.expand_dims(np.argmax(preds[0], axis=-1), -1))
             ax[0].imshow(rgb_mask)
             ax[1].imshow(x[0])
-            
+
             ax[2].imshow(x[0])
-            ax[2].imshow(rgb_mask, cmap = 'jet', alpha = 0.5)
+            ax[2].imshow(rgb_mask, cmap='jet', alpha=0.5)
